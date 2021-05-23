@@ -8,17 +8,17 @@ This Docker image is multi architecture. Supported archtictures include:
 * amd64 ("normal PC)
 * arm64 (Raspberry Pi 4 or newer running "real" OS like Ubuntu)
 
-The Docker images can be found here https://hub.docker.com/repository/docker/dkrizic/observium/
 
 ## Sources
 
-The source for this Dockerimage can be found here: https://github.com/dkrizic/docker-observium
+* Source Code https://github.com/dkrizic/docker-observium
+* Docker images https://hub.docker.com/repository/docker/dkrizic/observium/
 
 ## Installation
 
 ### Requirements
 
-* A Kubernetes cluster with amd64, arm32 or arm64 nodes (or any combination of that)
+* A Kubernetes cluster with amd64 or arm64 nodes (or any combination of that)
 * An installed Ingress Controller
 
 ### Helm Chart
@@ -100,7 +100,16 @@ resources:
 ```
 
 Note that the entries unter observium.db must match the entries from MariaDB in order to connect property. Also change the hostname to your own hostname. 
-In this case observium should be available as https://observium.example.com
+In this case observium should be available as https://observium.example.com. Now run
+
+```
+helm -n observium upgrade --install observium -f observium.yaml dkrizic/observium
+```
+to install Observium. Enjoy.
+
+## Changelog
+
+* 2021-05-23: First version, contains Observium CE 10731
 
 ## Credits
 
