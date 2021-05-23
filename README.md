@@ -6,8 +6,7 @@ memory, CPU and other details. Find more information at http://www.observium.org
 This Docker image is multi architecture. Supported archtictures include:
 
 * amd64 ("normal PC)
-* arm32/v7 (Raspbian)
-* arm64/v8 (Raspberry Pi running "real" OS like Ubuntu)
+* arm64 (Raspberry Pi 4 or newer running "real" OS like Ubuntu)
 
 ## Sources
 
