@@ -6,6 +6,7 @@ LABEL maintainer "darko@krizic.net"
 LABEL version="1.0"
 LABEL description="Docker container for Observium Community Edition"
 
+ARG DEBIAN_FRONTEND=noninteractive
 ARG OBSERVIUM_DB_HOST=observiumdb
 ARG OBSERVIUM_DB_USER=observium
 ARG OBSERVIUM_DB_PASS=passw0rd
@@ -20,8 +21,7 @@ ENV OBSERVIUM_DB_PASS=$OBSERVIUM_DB_PASS
 ENV OBSERVIUM_DB_NAME=$OBSERVIUM_DB_NAME
 
 # install prerequisites and cleanup
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-RUN apt-get install -y libapache2-mod-php7.4 php7.4-cli php7.4-mysql php7.4-mysqli php7.4-gd php7.4-json \
+RUN apt install libapache2-mod-php7.4 php7.4-cli php7.4-mysql php7.4-mysqli php7.4-gd php7.4-json \
     php-pear snmp fping mysql-client python3-mysqldb rrdtool subversion whois mtr-tiny \
     ipmitool graphviz imagemagick apache2 python3-pymysql python-is-python3 \
     cron locales supervisor wget curl
