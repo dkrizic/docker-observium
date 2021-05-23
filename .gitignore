@@ -2,7 +2,4 @@ data
 lock
 logs
 rrd
-*.2019*
-*.2020*
-*.2021*
 .idea
