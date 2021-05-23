@@ -98,4 +98,8 @@ resources:
 ```
 
 Note that the entries unter observium.db must match the entries from MariaDB in order to connect property. Also change the hostname to your own hostname. 
-In this case observium should be available as https://observium.krizic.net
+In this case observium should be available as https://observium.example.com
+
+## Credits
+
+This repository was forked from https://github.com/somsakc/docker-observium by https://github.com/somsakc/.
