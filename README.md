@@ -8,6 +8,8 @@ This Docker image is multi architecture. Supported archtictures include:
 * amd64 ("normal PC)
 * arm64 (Raspberry Pi 4 or newer running "real" OS like Ubuntu)
 
+The Docker images can be found here https://hub.docker.com/repository/docker/dkrizic/observium/
+
 ## Sources
 
 The source for this Dockerimage can be found here: https://github.com/dkrizic/docker-observium

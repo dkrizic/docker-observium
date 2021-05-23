@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+      - uses: actions/checkout@v2
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
@@ -36,5 +38,6 @@ jobs:
         uses: peter-evans/dockerhub-description@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
           repository: dkrizic/observium
+          short-description: ${{ github.event.repository.description }}
