@@ -21,7 +21,7 @@ ENV OBSERVIUM_DB_PASS=$OBSERVIUM_DB_PASS
 ENV OBSERVIUM_DB_NAME=$OBSERVIUM_DB_NAME
 
 # install prerequisites and cleanup
-RUN apt install libapache2-mod-php7.4 php7.4-cli php7.4-mysql php7.4-mysqli php7.4-gd php7.4-json \
+RUN apt update && apt install libapache2-mod-php7.4 php7.4-cli php7.4-mysql php7.4-mysqli php7.4-gd php7.4-json \
     php-pear snmp fping mysql-client python3-mysqldb rrdtool subversion whois mtr-tiny \
     ipmitool graphviz imagemagick apache2 python3-pymysql python-is-python3 \
     cron locales supervisor wget curl
