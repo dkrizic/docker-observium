@@ -21,7 +21,7 @@ ENV OBSERVIUM_DB_PASS=$OBSERVIUM_DB_PASS
 ENV OBSERVIUM_DB_NAME=$OBSERVIUM_DB_NAME
 
 # install prerequisites and cleanup
-RUN apt update && apt install libapache2-mod-php7.4 php7.4-cli php7.4-mysql php7.4-mysqli php7.4-gd php7.4-json \
+RUN apt-get update && apt-get install -y libapache2-mod-php7.4 php7.4-cli php7.4-mysql php7.4-mysqli php7.4-gd php7.4-json \
     php-pear snmp fping mysql-client python3-mysqldb rrdtool subversion whois mtr-tiny \
     ipmitool graphviz imagemagick apache2 python3-pymysql python-is-python3 \
     cron locales supervisor wget curl
@@ -72,7 +72,7 @@ RUN phpenmod mcrypt
 COPY observium-apache24 /etc/apache2/sites-available/000-default.conf
 RUN a2dismod mpm_event && \
     a2enmod mpm_prefork && \
-    a2enmod php7.0 && \
+    a2enmod php7.4 && \
     a2enmod rewrite && \
     chmod 644 /etc/apache2/sites-available/000-default.conf && \
     sed -i -e "s/\${APACHE_LOG_DIR}\//\/opt\/observium\/logs\/apache2-/g" /etc/apache2/apache2.conf
