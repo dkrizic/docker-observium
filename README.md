@@ -1,6 +1,6 @@
 # Docker container for Observium Community Edition
 
-Observium is a Network Monitoring system that uses SNMP to discovery details about each hosts and display graph about
+Observium is a Network Monitoring system that uses SNMP to discover details about each host and display graphs about
 memory, CPU and other details. Find more information at http://www.observium.org.
 
 This Docker image is multi architecture. Supported archtictures include:
@@ -8,6 +8,7 @@ This Docker image is multi architecture. Supported archtictures include:
 * amd64 ("normal PC)
 * arm64 (Raspberry Pi 4 or newer running "real" OS like Ubuntu)
 
+Further architectures on request.
 
 ## Sources
 
@@ -15,6 +16,13 @@ This Docker image is multi architecture. Supported archtictures include:
 * Docker images https://hub.docker.com/repository/docker/dkrizic/observium/
 
 ## Installation
+
+I am using the Docker image on a hybrid Kubernetes cluster so I prepared
+
+* This Docker image
+* A Helm chart
+
+This allows the installation of Observium on Kubernetes and expose it using an Ingress Controller.
 
 ### Requirements
 
@@ -64,7 +72,7 @@ You should now have MariaDB up an running with is available as mysql://observium
 Create a configuration file observium.yaml
 
 ```
-odeSelector:
+nodeSelector:
   kubernetes.io/arch: arm64
 ingress:
   enabled: true
