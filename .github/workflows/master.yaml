@@ -29,8 +29,6 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: dkrizic/observium:latest
-          context: ./docker
-          file: ./docker/Dockerfile
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
