@@ -1,85 +1,102 @@
 # Docker container for Observium Community Edition
-Observium is network monitoring with intuition. It is a low-maintenance auto-discovering network monitoring platform supporting a wide range of device types, platforms and operating systems including Cisco, Windows, Linux, HP, Juniper, Dell, FreeBSD, Brocade, Netscaler, NetApp and many more. Observium focuses on providing a beautiful and powerful yet simple and intuitive interface to the health and status of your network. For more information, go to http://www.observium.org site.
 
-Available platform are:-
-* AMD64 (Intel x86_64) https://hub.docker.com/r/mbixtech/observium/
-* ARM32v7 (Raspberri Pi 2/3) https://hub.docker.com/r/mbixtech/arm32v7-observium/
+Observium is a Network Monitoring system that uses SNMP to discovery details about each hosts and display graph about
+memory, CPU and other details. Find more information at http://www.observium.org.
 
-## Usage
-Either follow the choice A. or B. below to run Observium.
+This Docker image is multi architecture. Supported archtictures include:
 
-### A. Manual Run Containers
-- Prepare working directory for docker containers, for example below.
-```
-  $ mkdir /home/docker/observium
-  $ cd /home/docker/observium
-  $ mkidr data logs rrd
-```
-- Run official MariaDB container
-```
-  $ docker run --name observiumdb
-    -v /home/docker/observium/data:/var/lib/mysql \
-    -e MYSQL_ROOT_PASSWORD=passw0rd \
-    -e MYSQL_USER=observium \
-    -e MYSQL_PASSWORD=passw0rd \
-    -e MYSQL_DATABASE=observium
-    -e TZ=Asia/Bangkok
-    mariadb
-```
+* amd64 ("normal PC)
+* arm32/v7 (Raspbian)
+* arm64/v8 (Raspberry Pi running "real" OS like Ubuntu)
 
-- Run this Observium container
+## Sources
+
+The source for this Dockerimage can be found here: https://github.com/dkrizic/docker-observium
+
+## Installation
+
+### Requirements
+
+* A Kubernetes cluster with amd64, arm32 or arm64 nodes (or any combination of that)
+* An installed Ingress Controller
+
+### Helm Chart
+
+I created a Helm Chart for deploying Observium into a Kubernetes cluster which can be found here https://github.com/dkrizic/charts/tree/main/charts/observium
+
+### Preparation
+
+Create namespace using
+
 ```
-  $ docker run --name observiumapp --link observiumdb:observiumdb \
-    -v /home/docker/observium/logs:/opt/observium/logs \
-    -v /home/docker/observium/rrd:/opt/observium/rrd \
-    -e OBSERVIUM_ADMIN_USER=admin \
-    -e OBSERVIUM_ADMIN_PASS=passw0rd \
-    -e OBSERVIUM_DB_HOST=observiumdb \
-    -e OBSERVIUM_DB_USER=observium \
-    -e OBSERVIUM_DB_PASS=passw0rd \
-    -e OBSERVIUM_DB_NAME=observium \
-    -e OBSERVIUM_BASE_URL=http://yourserver.yourdomain:8080 \
-    -e TZ=Asia/Bangkok
-    -p 8080:80
-    mbixtech/observium
+kubectl create namespace observium
 ```
 
-> Note:
-> - You must replace passwords specified in environment parameters of both containers with your secure passwords instead.
-> - OBSERVIUM_BASE_URL supports AMD64 container only (plan to support ARM32v7 soon).
+### Install MariaDB
 
-### B. Use Docker Composer
-- Follow instuctions below to create extra working directory of docker containers.
-```
-  $ mkdir /home/docker/observium
-  $ cd /home/docker/observium
-  $ mkdir data logs mysql
-```
-> You can change /home/docker directory to your desired directory and you need to change the volume mapping directories in docker-compose.yml file also.
+Create a configuration file mariadb.yaml
 
-- Download docker-compose.yml file from https://github.com/somsakc/observium github repository. Then, place docker-compose.yml file into /home/docker/observium directory.
-
-- Run both database and observium containers.
 ```
-  $ docker-compose up
+userDatabase:
+  name: observium
+  user: observium
+  password: passw0rd
+  rootPassword: observium
+storage:
+  requestedSize: 10Gi
+nodeSelector:
+  kubernetes.io/arch: arm64
 ```
 
-## Changes
-- [2020-02-16] Enhanced docker image with Observium CE 19.8.10000
-  - Revised initial/kickstart script for first time of container running with more information about database initialization.
-  - Moved Apache http access and error logs to /opt/observium/logs directory.
-  - Added logs of all cron jobs storing in /opt/observium/logs directory. 
-  - Added logrotate for rotating logs in /opt/observium/logs directory.
-  - Chnaged working directory of container image to /opt/observium for ease of managing Observium inside.
-  - Fixed invalid cron parameter specified in supervisord.conf.
-  - Revised Dockerfile file.
-- [2018-10-28] Added 'Feature request: OBSERVIUM_BASE_URL #3' feature.
-- [2017-08-19] Corrected error of "DB Error 1044: Access denied for user 'observium'@'%' to database 'observium'" by replacing MYSQL_DB_NAME environment variable of database container with MYSQL_DATABASE instead (regarding environment definition changed by official mariadb image).
-- [2017-08-19] Add Observium image available on Raspberri Pi 2/3 (arm32v7) platform.
+Change accordingly to you environment. The run
 
-## Source Repository
-See source of project at https://github.com/somsakc/observium
+```
+helm repo add groundhog2k https://groundhog2k.github.io/helm-charts/
+helm repo update
+helm -n observium upgrade --install observium-mariadb -f mariadb.yaml groundhog2k/mariadb
+```
 
-## Credits
-- Official Observium web site [https://www.observium.org]
-- Ubuntu installation from Observium web site [https://docs.observium.org/install_debian/]
+You should now have MariaDB up an running with is available as mysql://observium-mariadb:3306 inside the cluster which has a database observium preconfigured.
+
+### Install Obserivum
+
+Create a configuration file observium.yaml
+
+```
+odeSelector:
+  kubernetes.io/arch: arm64
+ingress:
+  enabled: true
+  hosts:
+    - host: observium.krizic.net
+      paths: 
+      - path: "/"
+observium:
+  base_url: https://observium.example.com
+  server_name: observium.example.com
+  tz: "Europe/Berlin"
+  admin:
+    user: admin
+    password: verySecretPassword
+  db:
+    host: observium-mariadb
+    user: observium
+    password: passw0rd
+    name: observium
+
+persistence:
+  rrd:
+    size: 20Gi
+    storageClassName: rook-ceph-block-csi
+  logs:
+    size: 20Gi
+    storageClassName: rook-ceph-block-csi
+resources:
+  requests:
+    cpu: 1500m
+  limits:
+    cpu: 2800m
+```
+
+Note that the entries unter observium.db must match the entries from MariaDB in order to connect property. Also change the hostname to your own hostname. 
+In this case observium should be available as https://observium.krizic.net
