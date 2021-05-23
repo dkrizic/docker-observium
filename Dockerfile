@@ -54,7 +54,8 @@ RUN cd /opt/observium && \
     sed -i -e "s/= 'USERNAME';/= getenv('OBSERVIUM_DB_USER');/g" config.php && \
     sed -i -e "s/= 'PASSWORD';/= getenv('OBSERVIUM_DB_PASS');/g" config.php && \
     sed -i -e "s/= 'observium';/= getenv('OBSERVIUM_DB_NAME');/g" config.php && \
-    echo "\$config['base_url'] = getenv('OBSERVIUM_BASE_URL');" >> config.php
+    echo "\$config['base_url'] = getenv('OBSERVIUM_BASE_URL');" >> config.php && \
+    echo "\$config['web_session_ip'] = false;" >> config.php
 
 COPY observium-init.sh /opt/observium/observium-init.sh
 
