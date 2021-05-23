@@ -111,6 +111,8 @@ Note that the entries unter observium.db must match the entries from MariaDB in 
 In this case observium should be available as https://observium.example.com. Now run
 
 ```
+helm repo add dkrizic https://dkrizic.github.io/charts
+helm repo update
 helm -n observium upgrade --install observium -f observium.yaml dkrizic/observium
 ```
 to install Observium. Enjoy.
